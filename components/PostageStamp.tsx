@@ -7,13 +7,13 @@ interface PostageStampProps {
   title?: string;
   value?: string;
 
-  // Responsive size
   width?: number | string;
   height?: number | string;
 
-  // Image controls
   imageFit?: "cover" | "contain" | "center";
   imagePosition?: string;
+
+  titleAlign?: "left" | "center" | "right";
 
   alt?: string;
   className?: string;
@@ -30,13 +30,11 @@ export default function PostageStamp({
   imageFit = "cover",
   imagePosition = "center",
 
+  titleAlign = "left",
+
   alt = "Postage stamp",
   className = "",
 }: PostageStampProps) {
-  /*
-   * These are used only as the SVG's internal coordinate system.
-   * The actual component can scale responsively with CSS.
-   */
   const numericWidth =
     typeof width === "number" ? width : 400;
 
@@ -74,30 +72,18 @@ export default function PostageStamp({
     });
   }
 
-  /*
-   * Generate unique IDs.
-   * This prevents multiple stamps on the same page
-   * from sharing the same SVG mask/gradient.
-   */
   const id = useId();
 
-  const maskId = `stamp-mask-${id.replace(/:/g, "")}`;
-  const gradientId = `stamp-gradient-${id.replace(/:/g, "")}`;
+  const cleanId = id.replace(/:/g, "");
 
-  /*
-   * SVG image behavior
-   */
+  const maskId = `stamp-mask-${cleanId}`;
+  const gradientId = `stamp-gradient-${cleanId}`;
+
   const preserveAspectRatio =
     imageFit === "cover"
       ? "xMidYMid slice"
       : "xMidYMid meet";
 
-  /*
-   * If width is responsive, the height automatically
-   * follows the original aspect ratio.
-   *
-   * If height is explicitly supplied, we use it.
-   */
   const aspectRatio = numericWidth / numericHeight;
 
   const responsiveStyle: React.CSSProperties = {
@@ -106,17 +92,31 @@ export default function PostageStamp({
     aspectRatio: `${aspectRatio}`,
   };
 
-  /*
-   * Only apply explicit height when the user gives a
-   * non-auto height.
-   */
   if (height !== "auto") {
     responsiveStyle.height = height;
   }
 
+  // =========================
+  // TITLE ALIGNMENT
+  // =========================
+
+  const titleX =
+    titleAlign === "left"
+      ? numericWidth * 0.07
+      : titleAlign === "center"
+        ? numericWidth * 0.5
+        : numericWidth * 0.93;
+
+  const titleAnchor =
+    titleAlign === "left"
+      ? "start"
+      : titleAlign === "center"
+        ? "middle"
+        : "end";
+
   return (
     <div
-      className={`postage-stamp ${className}`}
+      className={`postage-stamp ${className} doto-variable`}
       style={responsiveStyle}
     >
       <svg
@@ -137,8 +137,8 @@ export default function PostageStamp({
           {/* =========================
               STAMP MASK
           ========================== */}
+
           <mask id={maskId}>
-            {/* Stamp body */}
             <rect
               x="0"
               y="0"
@@ -147,7 +147,6 @@ export default function PostageStamp({
               fill="white"
             />
 
-            {/* Perforation holes */}
             {holes.map((hole, index) => (
               <circle
                 key={index}
@@ -160,8 +159,9 @@ export default function PostageStamp({
           </mask>
 
           {/* =========================
-              GRADIENT OVERLAY
+              GRADIENT
           ========================== */}
+
           <linearGradient
             id={gradientId}
             x1="0"
@@ -187,7 +187,6 @@ export default function PostageStamp({
 
         {imageFit === "center" ? (
           <>
-            {/* White stamp background */}
             <rect
               x="0"
               y="0"
@@ -197,7 +196,6 @@ export default function PostageStamp({
               mask={`url(#${maskId})`}
             />
 
-            {/* Centered image */}
             <image
               href={image}
               x={numericWidth * 0.12}
@@ -239,13 +237,13 @@ export default function PostageStamp({
         ========================== */}
 
         <text
-          x={numericWidth * 0.07}
+          x={titleX}
           y={numericHeight * 0.12}
+          textAnchor={titleAnchor}
           fill="white"
           fontSize={numericWidth * 0.085}
           fontWeight="600"
           style={{
-            fontFamily: "Georgia, serif",
             paintOrder: "stroke",
             stroke: "rgba(0,0,0,0.3)",
             strokeWidth: 1,
@@ -262,11 +260,10 @@ export default function PostageStamp({
           x={numericWidth * 0.93}
           y={numericHeight * 0.93}
           textAnchor="end"
-          fill="white"
+          fill="#101cf5"
           fontSize={numericWidth * 0.075}
-          fontWeight="600"
+          fontWeight="900"
           style={{
-            fontFamily: "Georgia, serif",
             paintOrder: "stroke",
             stroke: "rgba(0,0,0,0.3)",
             strokeWidth: 1,

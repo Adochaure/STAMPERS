@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
-import { Italiana } from "next/font/google";
+import { Doto, Italiana } from "next/font/google";
 import "./globals.css";
+
+const doto = Doto({
+  variable: "--font-doto",
+  subsets: ["latin"],
+});
 
 const italiana = Italiana({
   variable: "--font-italiana",
@@ -17,7 +22,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${italiana.variable} h-full antialiased`}
+      className={`${italiana.variable} ${doto.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
