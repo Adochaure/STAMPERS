@@ -44,7 +44,7 @@ export default function Hero() {
           type="button"
           className="group  flex h-[clamp(2.75rem,6vw,3.75rem)] w-fit items-stretch overflow-hidden border border-[#f6efe4] text-[clamp(0.7rem,1.3vw,1rem)] text-[#f6efe4]"
         >
-          <span className="flex items-center px-[clamp(1rem,2vw,1.4rem)] uppercase tracking-[0.18em] doto-variable">
+          <span className="flex font-bold items-center px-[clamp(1rem,2vw,1.4rem)] uppercase tracking-[0.18em] doto-variable">
             Let&apos;s Collect!
           </span>
          <span className="group flex w-[clamp(2.75rem,5vw,3.25rem)] items-center justify-center overflow-hidden bg-[#f6efe4] text-[#0a21f5] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:bg-[#101fb5] group-hover:text-[#f6efe4]">
