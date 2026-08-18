@@ -31,23 +31,21 @@ export default function Navbar() {
 
         <nav className="hidden items-center gap-8 text-sm uppercase tracking-[0.18em] md:flex">
           {navLinks.map((link) => (
-            <a key={link} href="#" className="transition-opacity hover:opacity-80">
-              {link}
-            </a>
+            <a
+  key={link}
+  href="#"
+  className="relative transition-opacity duration-300 hover:opacity-80
+             after:absolute after:left-0 after:bottom-[-2px]
+             after:h-[2px] after:w-0 after:bg-white
+             after:transition-all after:duration-300
+             hover:after:w-full"
+>
+  {link}
+</a>
           ))}
         </nav>
 
-        <button
-          type="button"
-          aria-label="Open menu"
-          className="inline-flex h-11 w-11 items-center justify-center md:hidden"
-        >
-          <span className="relative block h-5 w-6">
-            <span className="absolute left-0 top-0 h-0.5 w-full rounded bg-current" />
-            <span className="absolute left-0 top-2 h-0.5 w-full rounded bg-current" />
-            <span className="absolute left-0 top-4 h-0.5 w-full rounded bg-current" />
-          </span>
-        </button>
+       
       </div>
     </header>
   );
