@@ -16,6 +16,7 @@ export default function Hero() {
     width="clamp(120px, 32vw, 200px)"
     height="auto"
     imageFit="cover"
+    stroke1="#fff"
   />
 
   <PostageStamp
@@ -24,6 +25,7 @@ export default function Hero() {
      titleAlign="center"
     value="02"
     width="clamp(120px, 32vw, 200px)"
+     stroke1="#fff"
     height="auto"
     imageFit="cover"
   />
@@ -34,6 +36,7 @@ export default function Hero() {
      titleAlign="right"
     value="03"
     width="clamp(120px, 32vw, 200px)"
+     stroke1="#fff"
     height="auto"
     imageFit="cover"
   />

@@ -6,7 +6,7 @@ interface PostageStampProps {
   image: string;
   title?: string;
   value?: string;
-
+  
   width?: number | string;
   height?: number | string;
 
@@ -17,6 +17,8 @@ interface PostageStampProps {
 
   alt?: string;
   className?: string;
+  stroke1?: string;
+  stroke2?: string;
 }
 
 export default function PostageStamp({
@@ -31,7 +33,8 @@ export default function PostageStamp({
   imagePosition = "center",
 
   titleAlign = "left",
-
+  stroke1 = "rgba(0,0,0,0.3)",
+  stroke2 = "rgba(0,0,0,0.3)",
   alt = "Postage stamp",
   className = "",
 }: PostageStampProps) {
@@ -240,12 +243,12 @@ export default function PostageStamp({
           x={titleX}
           y={numericHeight * 0.12}
           textAnchor={titleAnchor}
-          fill="white"
+          fill={stroke1}
           fontSize={numericWidth * 0.085}
           fontWeight="600"
           style={{
             paintOrder: "stroke",
-            stroke: "rgba(0,0,0,0.3)",
+            stroke: stroke1,
             strokeWidth: 1,
           }}
         >
@@ -260,12 +263,12 @@ export default function PostageStamp({
           x={numericWidth * 0.93}
           y={numericHeight * 0.93}
           textAnchor="end"
-          fill="#101cf5"
+          fill= {stroke2}
           fontSize={numericWidth * 0.075}
           fontWeight="900"
           style={{
             paintOrder: "stroke",
-            stroke: "rgba(0,0,0,0.3)",
+            stroke: stroke2,
             strokeWidth: 1,
           }}
         >
