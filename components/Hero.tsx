@@ -4,6 +4,7 @@ export default function Hero() {
   return (
     <section className="flex min-h-screen items-center justify-center bg-[#0a21f5] px-4 py-4 text-[#f6efe4] sm:px-6 sm:py-6">
       <div className="flex flex-col items-center justify-center gap-6">
+   
         <h1 className="text-center text-[clamp(4rem,18vw,14rem)] leading-none tracking-[0.05em]">
           STAMPERS
         </h1>
@@ -17,6 +18,7 @@ export default function Hero() {
     height="auto"
     imageFit="cover"
     stroke1="#fff"
+    parallax
   />
 
   <PostageStamp
@@ -28,6 +30,7 @@ export default function Hero() {
      stroke1="#fff"
     height="auto"
     imageFit="cover"
+    parallax
   />
 
   <PostageStamp
@@ -39,7 +42,9 @@ export default function Hero() {
      stroke1="#fff"
     height="auto"
     imageFit="cover"
+    parallax
   />
+  
 </div>
 </div>
 

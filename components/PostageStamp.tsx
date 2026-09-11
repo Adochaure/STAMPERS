@@ -1,107 +1,91 @@
 "use client";
 
-import React, { useId } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 
 interface PostageStampProps {
   image: string;
   title?: string;
   value?: string;
-  
   width?: number | string;
   height?: number | string;
-
   imageFit?: "cover" | "contain" | "center";
   imagePosition?: string;
-
   titleAlign?: "left" | "center" | "right";
-
   alt?: string;
   className?: string;
   stroke1?: string;
   stroke2?: string;
+  parallax?: boolean;
 }
 
 export default function PostageStamp({
   image,
   title = "Éire",
   value = "75",
-
   width = 400,
   height = 400,
-
   imageFit = "cover",
   imagePosition = "center",
-
   titleAlign = "left",
   stroke1 = "rgba(0,0,0,0.3)",
   stroke2 = "rgba(0,0,0,0.3)",
   alt = "Postage stamp",
   className = "",
+  parallax = false,
 }: PostageStampProps) {
-  const numericWidth =
-    typeof width === "number" ? width : 400;
+  const stampRef = useRef<HTMLDivElement>(null);
+  const [offset, setOffset] = useState(0);
 
-  const numericHeight =
-    typeof height === "number" ? height : 400;
+  const numericWidth = typeof width === "number" ? width : 400;
+  const numericHeight = typeof height === "number" ? height : 400;
+
+  useEffect(() => {
+    if (!parallax) return;
+
+    const update = () => {
+      if (!stampRef.current) return;
+
+      const rect = stampRef.current.getBoundingClientRect();
+      const center = window.innerHeight / 2;
+      const stampCenter = rect.top + rect.height / 2;
+
+      setOffset((stampCenter - center) * -0.25);
+    };
+
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+
+    return () => window.removeEventListener("scroll", update);
+  }, [parallax]);
 
   const spacing = 24;
   const holeRadius = 7;
-
   const holes: { cx: number; cy: number }[] = [];
 
-  // Top + bottom perforations
   for (let x = 12; x <= numericWidth - 12; x += spacing) {
-    holes.push({
-      cx: x,
-      cy: 0,
-    });
-
-    holes.push({
-      cx: x,
-      cy: numericHeight,
-    });
+    holes.push({ cx: x, cy: 0 });
+    holes.push({ cx: x, cy: numericHeight });
   }
 
-  // Left + right perforations
   for (let y = 12; y <= numericHeight - 12; y += spacing) {
-    holes.push({
-      cx: 0,
-      cy: y,
-    });
-
-    holes.push({
-      cx: numericWidth,
-      cy: y,
-    });
+    holes.push({ cx: 0, cy: y });
+    holes.push({ cx: numericWidth, cy: y });
   }
 
-  const id = useId();
-
-  const cleanId = id.replace(/:/g, "");
-
-  const maskId = `stamp-mask-${cleanId}`;
-  const gradientId = `stamp-gradient-${cleanId}`;
+  const id = useId().replace(/:/g, "");
+  const maskId = `stamp-mask-${id}`;
+  const gradientId = `stamp-gradient-${id}`;
 
   const preserveAspectRatio =
-    imageFit === "cover"
-      ? "xMidYMid slice"
-      : "xMidYMid meet";
-
-  const aspectRatio = numericWidth / numericHeight;
+    imageFit === "cover" ? "xMidYMid slice" : "xMidYMid meet";
 
   const responsiveStyle: React.CSSProperties = {
     width,
     position: "relative",
-    aspectRatio: `${aspectRatio}`,
+    aspectRatio: `${numericWidth / numericHeight}`,
   };
 
-  if (height !== "auto") {
-    responsiveStyle.height = height;
-  }
-
-  // =========================
-  // TITLE ALIGNMENT
-  // =========================
+  if (height !== "auto") responsiveStyle.height = height;
 
   const titleX =
     titleAlign === "left"
@@ -119,6 +103,7 @@ export default function PostageStamp({
 
   return (
     <div
+      ref={stampRef}
       className={`postage-stamp ${className} doto-variable`}
       style={responsiveStyle}
     >
@@ -129,30 +114,19 @@ export default function PostageStamp({
         preserveAspectRatio="none"
         role="img"
         aria-label={alt}
-        style={{
-          display: "block",
-          width: "100%",
-          height: "100%",
-          overflow: "visible",
-        }}
+        style={{ display: "block", overflow: "visible" }}
       >
         <defs>
-          {/* =========================
-              STAMP MASK
-          ========================== */}
-
           <mask id={maskId}>
             <rect
-              x="0"
-              y="0"
               width={numericWidth}
               height={numericHeight}
               fill="white"
             />
 
-            {holes.map((hole, index) => (
+            {holes.map((hole, i) => (
               <circle
-                key={index}
+                key={i}
                 cx={hole.cx}
                 cy={hole.cy}
                 r={holeRadius}
@@ -161,10 +135,6 @@ export default function PostageStamp({
             ))}
           </mask>
 
-          {/* =========================
-              GRADIENT
-          ========================== */}
-
           <linearGradient
             id={gradientId}
             x1="0"
@@ -172,62 +142,28 @@ export default function PostageStamp({
             x2="0"
             y2="1"
           >
-            <stop
-              offset="0%"
-              stopColor="rgba(0,0,0,0.03)"
-            />
-
-            <stop
-              offset="100%"
-              stopColor="rgba(0,0,0,0.15)"
-            />
+            <stop offset="0%" stopColor="rgba(0,0,0,0.03)" />
+            <stop offset="100%" stopColor="rgba(0,0,0,0.15)" />
           </linearGradient>
         </defs>
 
-        {/* =========================
-            IMAGE
-        ========================== */}
+        {/* IMAGE */}
+        <image
+          href={image}
+          x={parallax ? -numericWidth * 0.05 : 0}
+          y={
+            parallax
+              ? -numericHeight * 0.15 + offset
+              : 0
+          }
+          width={parallax ? numericWidth * 1.1 : numericWidth}
+          height={parallax ? numericHeight * 1.3 : numericHeight}
+          preserveAspectRatio={preserveAspectRatio}
+          mask={`url(#${maskId})`}
+        />
 
-        {imageFit === "center" ? (
-          <>
-            <rect
-              x="0"
-              y="0"
-              width={numericWidth}
-              height={numericHeight}
-              fill="white"
-              mask={`url(#${maskId})`}
-            />
-
-            <image
-              href={image}
-              x={numericWidth * 0.12}
-              y={numericHeight * 0.12}
-              width={numericWidth * 0.76}
-              height={numericHeight * 0.76}
-              preserveAspectRatio="xMidYMid meet"
-              mask={`url(#${maskId})`}
-            />
-          </>
-        ) : (
-          <image
-            href={image}
-            x="0"
-            y="0"
-            width={numericWidth}
-            height={numericHeight}
-            preserveAspectRatio={preserveAspectRatio}
-            mask={`url(#${maskId})`}
-          />
-        )}
-
-        {/* =========================
-            DARK OVERLAY
-        ========================== */}
-
+        {/* OVERLAY */}
         <rect
-          x="0"
-          y="0"
           width={numericWidth}
           height={numericHeight}
           fill={`url(#${gradientId})`}
@@ -235,10 +171,7 @@ export default function PostageStamp({
           pointerEvents="none"
         />
 
-        {/* =========================
-            TITLE
-        ========================== */}
-
+        {/* TITLE */}
         <text
           x={titleX}
           y={numericHeight * 0.12}
@@ -255,15 +188,12 @@ export default function PostageStamp({
           {title}
         </text>
 
-        {/* =========================
-            VALUE
-        ========================== */}
-
+        {/* VALUE */}
         <text
           x={numericWidth * 0.93}
           y={numericHeight * 0.93}
           textAnchor="end"
-          fill= {stroke2}
+          fill={stroke2}
           fontSize={numericWidth * 0.075}
           fontWeight="900"
           style={{
