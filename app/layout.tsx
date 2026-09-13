@@ -13,6 +13,8 @@ const italiana = Italiana({
   weight: "400",
 });
 
+import SmoothScroll from "@/components/SmoothScroll";
+
 export const metadata: Metadata = {
   title: "STAMPERS",
   description: "STAMPERS basic layout",
@@ -25,6 +27,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${italiana.variable} ${doto.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <SmoothScroll>{children}</SmoothScroll>
+      </body>
     </html>
   );
 }
